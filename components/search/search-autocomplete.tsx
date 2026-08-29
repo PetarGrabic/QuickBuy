@@ -3,10 +3,10 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { ArrowRight, History, Search, Tag, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { ProductImage } from "@/components/product-image"
 import {
   cn,
   formatCategoryName,
@@ -456,7 +456,7 @@ function SearchAutocomplete({
                           }}
                           className="relative block size-full overflow-hidden rounded-md border border-border bg-muted"
                         >
-                          <Image
+                          <ProductImage
                             src={product.thumbnail}
                             alt={product.title}
                             fill
@@ -544,7 +544,7 @@ function SearchAutocomplete({
                           className={rowClass(keyboardIndex === index)}
                         >
                           <div className="relative size-10 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
-                            <Image
+                            <ProductImage
                               src={product.thumbnail}
                               alt={product.title}
                               fill

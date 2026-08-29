@@ -2,13 +2,13 @@
 
 import * as React from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { ShoppingCart, CircleCheck } from "lucide-react"
 
 import { cn, formatPrice } from "@/lib/utils"
 import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
 import { useCart } from "@/lib/cart/cart-context"
 import { Button } from "@/components/ui/button"
+import { ProductImage } from "@/components/product-image"
 import {
   Popover,
   PopoverTrigger,
@@ -103,7 +103,7 @@ function CartButton({ className }: { className?: string }) {
 
                 <div className="mt-3 flex gap-3 border-b border-border pb-3">
                   <div className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
-                    <Image
+                    <ProductImage
                       src={lastAdded.thumbnail}
                       alt={lastAdded.title}
                       fill

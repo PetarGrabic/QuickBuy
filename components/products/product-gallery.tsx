@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { ProductImage } from "@/components/product-image"
 
 const ARROW_BUTTON_CLASS =
   "absolute top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 shadow-md outline-none backdrop-blur transition-opacity focus-visible:ring-2 focus-visible:ring-ring/50 lg:hidden"
@@ -111,7 +111,7 @@ function ProductGallery({
                 className="relative w-full shrink-0 snap-center snap-always"
                 aria-hidden={isClone}
               >
-                <Image
+                <ProductImage
                   src={src}
                   alt={
                     isClone
@@ -169,7 +169,7 @@ function ProductGallery({
                   : "border border-border hover:border-foreground/50"
               )}
             >
-              <Image
+              <ProductImage
                 src={src}
                 alt=""
                 fill

@@ -1,10 +1,10 @@
-import Image from "next/image"
 import Link from "next/link"
 
 import type { Product } from "@/lib/dummyjson"
 import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
 import { cn, formatPrice } from "@/lib/utils"
 import { StarRating } from "@/components/star-rating"
+import { ProductImage } from "@/components/product-image"
 
 function ProductCard({
   product,
@@ -35,7 +35,7 @@ function ProductCard({
       )}
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-muted">
-        <Image
+        <ProductImage
           src={product.thumbnail}
           alt={product.title}
           fill

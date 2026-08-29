@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
 
@@ -8,6 +7,7 @@ import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
 import { formatPrice } from "@/lib/utils"
 import { useCart, maxQuantityFor, type CartItem } from "@/lib/cart/cart-context"
 import { toast } from "@/components/ui/toast"
+import { ProductImage } from "@/components/product-image"
 import {
   Tooltip,
   TooltipTrigger,
@@ -51,7 +51,7 @@ function CartLineItem({ item }: { item: CartItem }) {
         href={`/products/${item.id}`}
         className="relative aspect-square size-28 shrink-0 overflow-hidden rounded-xl border border-border bg-muted sm:size-32"
       >
-        <Image
+        <ProductImage
           src={item.thumbnail}
           alt={item.title}
           fill
