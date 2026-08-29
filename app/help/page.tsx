@@ -6,7 +6,7 @@ import { PoliciesSection } from "@/components/help/policies-section"
 import { SupportSection } from "@/components/help/support-section"
 
 export const metadata: Metadata = {
-  title: "Help — QuickBuy",
+  title: "Help · QuickBuy",
   description:
     "Answers to common questions about orders, shipping, and returns, plus how to reach QuickBuy support.",
 }

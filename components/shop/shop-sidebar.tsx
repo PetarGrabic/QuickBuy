@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { Tag, Zap } from "lucide-react"
 
@@ -6,6 +8,7 @@ import { StarRating } from "@/components/star-rating"
 import { cn } from "@/lib/utils"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
 import type { Category } from "@/lib/dummyjson"
+import { useShopPending } from "@/components/shop/shop-pending-context"
 
 const RATINGS = [4, 3, 2]
 
@@ -20,9 +23,11 @@ function RatingFilterLink({
   count: number
   children: React.ReactNode
 }) {
+  const { markPending } = useShopPending()
   return (
     <Link
       href={href}
+      onClick={markPending}
       className={cn(
         "flex items-center justify-between rounded-md px-2 py-1.5 text-sm",
         active
@@ -51,9 +56,11 @@ function FilterLink({
   active: boolean
   children: React.ReactNode
 }) {
+  const { markPending } = useShopPending()
   return (
     <Link
       href={href}
+      onClick={markPending}
       className={cn(
         "rounded-md px-2 py-1.5 text-left text-sm",
         active
@@ -79,9 +86,11 @@ function DealRow({
   title: string
   description: string
 }) {
+  const { markPending } = useShopPending()
   return (
     <Link
       href={href}
+      onClick={markPending}
       className={cn(
         "flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors",
         active
@@ -159,6 +168,7 @@ function ShopSidebar({
   ratingCounts: Record<number, number>
   allRatingsCount: number
 }) {
+  const { markPending } = useShopPending()
   const activeRating = searchParams.minRating
   const discountedActive = searchParams.discounted === "1"
   const lowStockActive = searchParams.lowStock === "1"
@@ -291,6 +301,7 @@ function ShopSidebar({
 
       <Link
         href={resetHref}
+        onClick={markPending}
         className="rounded-md bg-foreground px-4 py-2.5 text-center text-sm font-semibold text-background hover:bg-foreground/90"
       >
         Reset Filters

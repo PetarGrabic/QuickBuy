@@ -1,10 +1,12 @@
 import Link from "next/link"
+import { Flame } from "lucide-react"
 
 import type { Product } from "@/lib/dummyjson"
 import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
 import { cn, formatPrice } from "@/lib/utils"
 import { StarRating } from "@/components/star-rating"
 import { ProductImage } from "@/components/product-image"
+import { ProductCardFavorite } from "@/components/products/product-card-favorite"
 
 function ProductCard({
   product,
@@ -26,59 +28,77 @@ function ProductCard({
   const isLowStock = product.stock >= 1 && product.stock < 10
   const large = size === "lg"
 
+  // Small ("default") cards — homepage carousels + related-products — get a
+  // slight bump above mobile. Large ("lg") shop-grid cards keep their own scale.
+  const badgeBase = cn(
+    "rounded-full px-2 py-0.5 text-xs font-semibold",
+    large ? "lg:px-2.5 lg:py-1 lg:text-sm" : "sm:px-2.5 sm:py-1 sm:text-sm"
+  )
+
   return (
-    <Link
-      href={`/products/${product.id}`}
+    <div
       className={cn(
-        "group flex flex-col gap-3",
+        "group relative flex flex-col gap-3",
         fill ? "w-full" : "w-48 shrink-0 sm:w-64"
       )}
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-muted">
-        <ProductImage
-          src={product.thumbnail}
-          alt={product.title}
-          fill
-          sizes="(min-width: 640px) 256px, 192px"
-          className={cn(
-            "object-contain p-6 transition-transform duration-300 group-hover:scale-105",
-            isOutOfStock && "opacity-50 grayscale"
-          )}
-        />
-        {hasDiscount && (
-          <span
+        <Link
+          href={`/products/${product.id}`}
+          aria-label={product.title}
+          tabIndex={-1}
+          className="absolute inset-0"
+        >
+          <ProductImage
+            src={product.thumbnail}
+            alt={product.title}
+            fill
+            sizes="(min-width: 640px) 256px, 192px"
             className={cn(
-              "absolute top-2 left-2 rounded-full bg-foreground px-2 py-0.5 text-xs font-semibold text-background",
-              large && "lg:px-2.5 lg:py-1 lg:text-sm"
+              "object-contain p-6 transition-transform duration-300 group-hover:scale-105",
+              isOutOfStock && "opacity-50 grayscale"
             )}
-          >
-            -{discount}%
-          </span>
-        )}
-        {isOutOfStock ? (
-          <span
-            className={cn(
-              "absolute top-2 right-2 rounded-full bg-foreground px-2 py-0.5 text-xs font-semibold text-background",
-              large && "lg:px-2.5 lg:py-1 lg:text-sm"
-            )}
-          >
-            Out of Stock
-          </span>
-        ) : (
-          isLowStock && (
-            <span
-              className={cn(
-                "absolute top-2 right-2 rounded-full border border-foreground bg-background px-2 py-0.5 text-xs font-semibold text-foreground",
-                large && "lg:px-2.5 lg:py-1 lg:text-sm"
-              )}
-            >
-              Only {product.stock} left
+          />
+        </Link>
+
+        <div className="pointer-events-none absolute top-2 left-2 z-10 flex flex-col items-start gap-1.5">
+          {hasDiscount && (
+            <span className={cn(badgeBase, "bg-foreground text-background")}>
+              -{discount}%
             </span>
-          )
-        )}
+          )}
+          {isOutOfStock ? (
+            <span className={cn(badgeBase, "bg-foreground text-background")}>
+              Out of Stock
+            </span>
+          ) : (
+            isLowStock && (
+              <span
+                className={cn(
+                  badgeBase,
+                  "inline-flex items-center gap-1 border border-foreground bg-background text-foreground"
+                )}
+              >
+                <Flame
+                  className={cn(
+                    "size-3",
+                    large ? "lg:size-3.5" : "sm:size-3.5"
+                  )}
+                  aria-hidden="true"
+                />
+                {product.stock} left
+              </span>
+            )
+          )}
+        </div>
+
+        <ProductCardFavorite product={product} large={large} />
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <Link
+        href={`/products/${product.id}`}
+        className="flex flex-col gap-1.5"
+      >
         <p
           className={cn(
             "line-clamp-1 text-sm font-medium text-foreground group-hover:underline",
@@ -121,8 +141,8 @@ function ProductCard({
             </span>
           )}
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   )
 }
 

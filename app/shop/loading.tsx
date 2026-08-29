@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"
+import { ProductGridSkeleton } from "@/components/shop/product-grid-skeleton"
 
 function SidebarSectionSkeleton({ rows }: { rows: number }) {
   return (
@@ -9,16 +10,6 @@ function SidebarSectionSkeleton({ rows }: { rows: number }) {
           <Skeleton key={i} className="h-8 w-full rounded-md" />
         ))}
       </div>
-    </div>
-  )
-}
-
-function CardSkeleton() {
-  return (
-    <div className="flex flex-col gap-3">
-      <Skeleton className="aspect-square w-full rounded-xl" />
-      <Skeleton className="h-4 w-3/4" />
-      <Skeleton className="h-5 w-1/2" />
     </div>
   )
 }
@@ -52,10 +43,8 @@ function ShopLoading() {
 
           <div className="mt-4 border-t border-border" />
 
-          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
+          <div className="mt-6">
+            <ProductGridSkeleton />
           </div>
         </div>
       </div>

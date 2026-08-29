@@ -50,7 +50,7 @@ export async function generateMetadata({
   const product = await getProduct(id)
 
   return {
-    title: `${product.title} — QuickBuy`,
+    title: `${product.title} · QuickBuy`,
     description: truncateForDisplay(product.description, 160),
   }
 }

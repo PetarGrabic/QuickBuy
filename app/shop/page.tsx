@@ -1,3 +1,5 @@
+import type { Metadata } from "next"
+
 import { getCategories, getShopProducts } from "@/lib/dummyjson"
 import { ProductCard } from "@/components/home/product-card"
 import { ShopSidebar } from "@/components/shop/shop-sidebar"
@@ -6,6 +8,8 @@ import { ShopSearch } from "@/components/shop/shop-search"
 import { ShopSortSelect } from "@/components/shop/shop-sort-select"
 import { MobileShopFilters } from "@/components/shop/mobile-shop-filters"
 import { ActiveFilterChips } from "@/components/shop/active-filter-chips"
+import { ShopPendingProvider } from "@/components/shop/shop-pending-context"
+import { ShopResultsGate } from "@/components/shop/shop-results-gate"
 import { cn, truncateForDisplay } from "@/lib/utils"
 import type { ShopParams } from "@/lib/shop-url"
 import type { ShopSort } from "@/lib/dummyjson"
@@ -16,6 +20,10 @@ import type { ShopSort } from "@/lib/dummyjson"
 // leaving a lonely orphan card.
 const PAGE_SIZE = 16
 const MAX_QUERY_DISPLAY_LENGTH = 40
+
+export const metadata: Metadata = {
+  title: "Shop · QuickBuy",
+}
 
 async function ShopPage({
   searchParams,
@@ -76,90 +84,101 @@ async function ShopPage({
         ? `Showing ${rangeStart}-${rangeEnd} of ${total} results for "${displayQuery}"`
         : `Showing ${rangeStart}-${rangeEnd} of ${total} products`
 
+  // Identifies the current filter/sort/search/page combination. When this
+  // changes, ShopResultsGate knows fresh results have actually arrived and
+  // clears the "pending" skeleton state.
+  const resultsKey = JSON.stringify({ ...params, page })
+
   return (
     <div className="mx-auto max-w-[1600px] px-4 pt-4 pb-10 sm:px-6 lg:px-10 lg:py-10 xl:px-14">
       <h1 className="sr-only">Shop</h1>
 
-      <ShopSearch categories={categories} defaultQuery={params.q} />
+      <ShopPendingProvider>
+        <ShopSearch categories={categories} defaultQuery={params.q} />
 
-      <div className="flex flex-col gap-8 lg:flex-row">
-        <div className="hidden lg:block">
-          <ShopSidebar
-            categories={categories}
-            searchParams={params}
-            ratingCounts={ratingCounts}
-            allRatingsCount={allRatingsCount}
-          />
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="lg:hidden">
-            <div className="flex items-center gap-2">
-              <MobileShopFilters
-                categories={categories}
-                searchParams={params}
-                activeCount={activeFilterCount}
-              />
-              <ShopSortSelect searchParams={params} className="flex-1" />
-            </div>
-            <p className="mt-4 text-sm text-muted-foreground">{countText}</p>
-            <div className="mt-3">
-              <ActiveFilterChips
-                searchParams={params}
-                categories={categories}
-              />
-            </div>
-          </div>
-
-          <div className="hidden items-center justify-between gap-4 lg:flex">
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <p className="shrink-0 text-sm text-muted-foreground">
-                {countText}
-              </p>
-              <ActiveFilterChips
-                searchParams={params}
-                categories={categories}
-                maxVisible={3}
-                wrap={false}
-              />
-            </div>
-            <ShopSortSelect searchParams={params} className="shrink-0" />
-          </div>
-
-          <div className="mt-4 border-t border-border" />
-
-          {products.length > 0 ? (
-            <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 xl:grid-cols-4">
-              {products.map((product, index) => (
-                <div
-                  key={product.id}
-                  className={cn(
-                    index === 14 && "hidden sm:block",
-                    index === 15 && "hidden xl:block"
-                  )}
-                >
-                  <ProductCard product={product} fill size="lg" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="min-h-[calc(100dvh-21rem)] sm:min-h-0">
-              <p className="mt-16 text-center text-muted-foreground">
-                No products match your filters.
-              </p>
-            </div>
-          )}
-
-          <div className="mt-10">
-            <ShopPagination
-              total={total}
-              page={page}
-              pageSize={PAGE_SIZE}
+        <div className="flex flex-col gap-8 lg:flex-row">
+          <div className="hidden lg:block">
+            <ShopSidebar
+              categories={categories}
               searchParams={params}
+              ratingCounts={ratingCounts}
+              allRatingsCount={allRatingsCount}
             />
           </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="lg:hidden">
+              <div className="flex items-center gap-2">
+                <MobileShopFilters
+                  categories={categories}
+                  searchParams={params}
+                  activeCount={activeFilterCount}
+                />
+                <ShopSortSelect searchParams={params} className="flex-1" />
+              </div>
+              <p className="mt-4 text-sm text-muted-foreground">{countText}</p>
+              <div className="mt-3">
+                <ActiveFilterChips
+                  searchParams={params}
+                  categories={categories}
+                />
+              </div>
+            </div>
+
+            <div className="hidden items-center justify-between gap-4 lg:flex">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <p className="shrink-0 text-sm text-muted-foreground">
+                  {countText}
+                </p>
+                <ActiveFilterChips
+                  searchParams={params}
+                  categories={categories}
+                  maxVisible={3}
+                  wrap={false}
+                />
+              </div>
+              <ShopSortSelect searchParams={params} className="shrink-0" />
+            </div>
+
+            <div className="mt-4 border-t border-border" />
+
+            <div className="mt-6">
+              <ShopResultsGate resultsKey={resultsKey}>
+                {products.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 xl:grid-cols-4">
+                    {products.map((product, index) => (
+                      <div
+                        key={product.id}
+                        className={cn(
+                          index === 14 && "hidden sm:block",
+                          index === 15 && "hidden xl:block"
+                        )}
+                      >
+                        <ProductCard product={product} fill size="lg" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="min-h-[calc(100dvh-21rem)] sm:min-h-0">
+                    <p className="mt-10 text-center text-muted-foreground">
+                      No products match your filters.
+                    </p>
+                  </div>
+                )}
+              </ShopResultsGate>
+            </div>
+
+            <div className="mt-10">
+              <ShopPagination
+                total={total}
+                page={page}
+                pageSize={PAGE_SIZE}
+                searchParams={params}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      </ShopPendingProvider>
     </div>
   )
 }

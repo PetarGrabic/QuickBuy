@@ -61,7 +61,7 @@ function CartView() {
 
   if (items.length === 0) {
     return (
-      <div className="flex min-h-[calc(100dvh-7rem)] flex-col items-center gap-3 pt-12 text-center sm:min-h-0 sm:py-24">
+      <div className="flex flex-col items-center gap-3 pt-16 pb-12 text-center sm:pt-24">
         <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
           Your cart is empty
         </h1>

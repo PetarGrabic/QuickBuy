@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
 import type { ShopSort } from "@/lib/dummyjson"
+import { useShopPending } from "@/components/shop/shop-pending-context"
 
 const SORT_OPTIONS: { value: ShopSort; label: string }[] = [
   { value: "featured", label: "Featured" },
@@ -30,10 +31,12 @@ function ShopSortSelect({
   className?: string
 }) {
   const router = useRouter()
+  const { markPending } = useShopPending()
   const value: ShopSort = (searchParams.sort as ShopSort | undefined) ?? "featured"
 
   function handleValueChange(next: unknown) {
     const sort = next as ShopSort
+    markPending()
     router.push(
       buildShopHref(searchParams, { sort: sort === "featured" ? undefined : sort })
     )

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { LoginForm } from "@/components/auth/login-form"
 
 export const metadata: Metadata = {
-  title: "Log in — QuickBuy",
+  title: "Log in · QuickBuy",
 }
 
 export default function LoginPage() {

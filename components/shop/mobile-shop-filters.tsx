@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
 import type { Category } from "@/lib/dummyjson"
 import { StarRating } from "@/components/star-rating"
+import { useShopPending } from "@/components/shop/shop-pending-context"
 
 const RATINGS = [4, 3, 2]
 
@@ -92,6 +93,7 @@ function MobileShopFilters({
   activeCount: number
 }) {
   const router = useRouter()
+  const { markPending } = useShopPending()
   const [open, setOpen] = React.useState(false)
 
   const categoryItems = React.useMemo<CategoryItem[]>(
@@ -129,6 +131,7 @@ function MobileShopFilters({
     categoryItems.find((c) => c.value === category) ?? null
 
   function handleApply() {
+    markPending()
     router.push(
       buildShopHref(searchParams, {
         category: category || undefined,
@@ -143,6 +146,7 @@ function MobileShopFilters({
   }
 
   function handleReset() {
+    markPending()
     router.push(
       searchParams.q ? `/shop?q=${encodeURIComponent(searchParams.q)}` : "/shop"
     )

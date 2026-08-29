@@ -1,9 +1,12 @@
+"use client"
+
 import Link from "next/link"
 import { X } from "lucide-react"
 
 import { cn, truncateForDisplay } from "@/lib/utils"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
 import type { Category } from "@/lib/dummyjson"
+import { useShopPending } from "@/components/shop/shop-pending-context"
 
 const DEFAULT_MAX_VISIBLE_CHIPS = 4
 const MAX_QUERY_DISPLAY_LENGTH = 30
@@ -93,6 +96,7 @@ function ActiveFilterChips({
   maxVisible?: number
   wrap?: boolean
 }) {
+  const { markPending } = useShopPending()
   const chips = buildChips(searchParams, categories)
   if (chips.length === 0) return null
 
@@ -110,6 +114,7 @@ function ActiveFilterChips({
         <Link
           key={chip.key}
           href={chip.removeHref}
+          onClick={markPending}
           className="flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-foreground hover:bg-muted/70"
         >
           {chip.label}

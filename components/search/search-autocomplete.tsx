@@ -7,6 +7,7 @@ import { ArrowRight, History, Search, Tag, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { ProductImage } from "@/components/product-image"
+import { useShopPending } from "@/components/shop/shop-pending-context"
 import {
   cn,
   formatCategoryName,
@@ -74,6 +75,7 @@ function SearchAutocomplete({
   compact?: boolean
 }) {
   const router = useRouter()
+  const { markPending } = useShopPending()
   const containerRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLInputElement>(null)
 
@@ -234,6 +236,7 @@ function SearchAutocomplete({
         setRecentSearches(addRecentSearch(query))
       }
     }
+    markPending()
     router.push(hrefForIndex(index))
     setDropdownOpen(false)
     onNavigate?.()
@@ -241,6 +244,7 @@ function SearchAutocomplete({
 
   function selectRecentSearch(item: string) {
     setRecentSearches(addRecentSearch(item))
+    markPending()
     router.push(`/shop?q=${encodeURIComponent(item)}`)
     setDropdownOpen(false)
     onNavigate?.()

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { SignupForm } from "@/components/auth/signup-form"
 
 export const metadata: Metadata = {
-  title: "Sign up — QuickBuy",
+  title: "Sign up · QuickBuy",
 }
 
 export default function SignupPage() {

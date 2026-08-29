@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 
-export const metadata: Metadata = { title: "Page not found — QuickBuy" }
+export const metadata: Metadata = { title: "Page not found · QuickBuy" }
 
 function NotFound() {
   return (
