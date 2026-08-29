@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Heart } from "lucide-react"
 
-import type { Product } from "@/lib/dummyjson"
+import type { Product } from "@/lib/products"
 import { cn } from "@/lib/utils"
 import { toast } from "@/components/ui/toast"
 

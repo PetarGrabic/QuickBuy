@@ -127,7 +127,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
   const itemCount = state.items.reduce((n, i) => n + i.quantity, 0)
   const subtotal = state.items.reduce(
     (sum, i) =>
-      sum + getDiscountedPrice(i.price, i.discountPercentage, i.stock) * i.quantity,
+      sum + getDiscountedPrice(i.price, i.discountPercentage) * i.quantity,
     0
   )
 

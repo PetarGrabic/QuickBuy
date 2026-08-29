@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { Flame } from "lucide-react"
 
-import type { Product } from "@/lib/dummyjson"
-import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
+import type { Product } from "@/lib/products"
+import { getDiscountedPrice } from "@/lib/discounts"
 import { cn, formatPrice } from "@/lib/utils"
 import { StarRating } from "@/components/star-rating"
 import { ProductImage } from "@/components/product-image"
@@ -17,12 +17,11 @@ function ProductCard({
   fill?: boolean
   size?: "default" | "lg"
 }) {
-  const discount = getSystemDiscount(product.discountPercentage, product.stock)
+  const discount = product.discountPercentage
   const hasDiscount = discount > 0
   const discountedPrice = getDiscountedPrice(
     product.price,
-    product.discountPercentage,
-    product.stock
+    product.discountPercentage
   )
   const isOutOfStock = product.stock === 0
   const isLowStock = product.stock >= 1 && product.stock < 10

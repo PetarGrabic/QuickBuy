@@ -5,7 +5,7 @@ import { HeaderActions } from "@/components/header/header-actions"
 import { CartButton } from "@/components/header/cart-button"
 import { MobileMenu } from "@/components/header/mobile-menu"
 import { MobileSearch } from "@/components/header/mobile-search"
-import { getCategories } from "@/lib/dummyjson"
+import { getCategories } from "@/lib/products"
 
 async function Header() {
   const categories = await getCategories()

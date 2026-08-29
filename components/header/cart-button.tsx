@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ShoppingCart, CircleCheck } from "lucide-react"
 
 import { cn, formatPrice } from "@/lib/utils"
-import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
+import { getDiscountedPrice } from "@/lib/discounts"
 import { useCart } from "@/lib/cart/cart-context"
 import { Button } from "@/components/ui/button"
 import { ProductImage } from "@/components/product-image"
@@ -61,11 +61,9 @@ function CartButton({ className }: { className?: string }) {
     clearTimer()
   }
 
-  const discount = lastAdded
-    ? getSystemDiscount(lastAdded.discountPercentage, lastAdded.stock)
-    : 0
+  const discount = lastAdded ? lastAdded.discountPercentage : 0
   const unitPrice = lastAdded
-    ? getDiscountedPrice(lastAdded.price, lastAdded.discountPercentage, lastAdded.stock)
+    ? getDiscountedPrice(lastAdded.price, lastAdded.discountPercentage)
     : 0
 
   return (

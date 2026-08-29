@@ -1,4 +1,4 @@
-import { getCategories } from "@/lib/dummyjson"
+import { getCategories } from "@/lib/products"
 import { SearchAutocomplete } from "@/components/search/search-autocomplete"
 
 async function HeroSearch() {

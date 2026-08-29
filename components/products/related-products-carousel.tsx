@@ -4,7 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
-import type { Product } from "@/lib/dummyjson"
+import type { Product } from "@/lib/products"
 import { cn } from "@/lib/utils"
 import { ProductCard } from "@/components/home/product-card"
 import { Carousel } from "@/components/home/carousel"

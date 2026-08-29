@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
 
-import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
+import { getDiscountedPrice } from "@/lib/discounts"
 import { formatPrice } from "@/lib/utils"
 import { useCart, maxQuantityFor, type CartItem } from "@/lib/cart/cart-context"
 import { toast } from "@/components/ui/toast"
@@ -19,8 +19,8 @@ import {
 function CartLineItem({ item }: { item: CartItem }) {
   const { items, setQuantity, removeItem, restoreItem } = useCart()
 
-  const discount = getSystemDiscount(item.discountPercentage, item.stock)
-  const discountedPrice = getDiscountedPrice(item.price, item.discountPercentage, item.stock)
+  const discount = item.discountPercentage
+  const discountedPrice = getDiscountedPrice(item.price, item.discountPercentage)
   const lineTotal = discountedPrice * item.quantity
   const cap = maxQuantityFor(item.stock)
 

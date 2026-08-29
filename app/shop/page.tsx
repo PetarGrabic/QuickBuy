@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { getCategories, getShopProducts } from "@/lib/dummyjson"
+import { getCategories, getShopProducts } from "@/lib/products"
 import { ProductCard } from "@/components/home/product-card"
 import { ShopSidebar } from "@/components/shop/shop-sidebar"
 import { ShopPagination } from "@/components/shop/shop-pagination"
@@ -12,7 +12,7 @@ import { ShopPendingProvider } from "@/components/shop/shop-pending-context"
 import { ShopResultsGate } from "@/components/shop/shop-results-gate"
 import { cn, truncateForDisplay } from "@/lib/utils"
 import type { ShopParams } from "@/lib/shop-url"
-import type { ShopSort } from "@/lib/dummyjson"
+import type { ShopSort } from "@/lib/products"
 
 // Fetched/paginated in fixed steps of 16 (the 4-column desktop count). The
 // grid then CSS-hides the last item at <xl (3 columns) and the last two at

@@ -1,19 +1,18 @@
 import { Flame } from "lucide-react"
 
-import type { ProductDetail } from "@/lib/dummyjson"
-import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
+import type { ProductDetail } from "@/lib/products"
+import { getDiscountedPrice } from "@/lib/discounts"
 import { formatPrice } from "@/lib/utils"
 import { StarRating } from "@/components/star-rating"
 import { AddToCart } from "@/components/products/add-to-cart"
 import { FavoriteButton } from "@/components/products/favorite-button"
 
 function ProductInfo({ product }: { product: ProductDetail }) {
-  const discount = getSystemDiscount(product.discountPercentage, product.stock)
+  const discount = product.discountPercentage
   const hasDiscount = discount > 0
   const discountedPrice = getDiscountedPrice(
     product.price,
-    product.discountPercentage,
-    product.stock
+    product.discountPercentage
   )
   const isOutOfStock = product.stock === 0
   const isLowStock = product.stock >= 1 && product.stock < 10

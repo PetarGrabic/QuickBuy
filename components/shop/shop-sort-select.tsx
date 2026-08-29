@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
-import type { ShopSort } from "@/lib/dummyjson"
+import type { ShopSort } from "@/lib/products"
 import { useShopPending } from "@/components/shop/shop-pending-context"
 
 const SORT_OPTIONS: { value: ShopSort; label: string }[] = [

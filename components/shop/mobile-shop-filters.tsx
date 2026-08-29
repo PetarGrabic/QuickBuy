@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/combobox"
 import { cn } from "@/lib/utils"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
-import type { Category } from "@/lib/dummyjson"
+import type { Category } from "@/lib/products"
 import { StarRating } from "@/components/star-rating"
 import { useShopPending } from "@/components/shop/shop-pending-context"
 

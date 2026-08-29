@@ -1,5 +1,5 @@
 import { SearchAutocomplete } from "@/components/search/search-autocomplete"
-import type { Category } from "@/lib/dummyjson"
+import type { Category } from "@/lib/products"
 
 function ShopSearch({
   categories,
