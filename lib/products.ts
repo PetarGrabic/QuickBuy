@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 
-import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
+import { getDiscountedPrice } from "@/lib/discounts"
 import { supabase } from "@/lib/supabase"
 
 interface Product {
@@ -104,14 +104,9 @@ async function getBestDeals(limit: number): Promise<Product[]> {
   const products = await getAllProducts()
 
   return products
-    .filter(
-      (product) =>
-        getSystemDiscount(product.discountPercentage, product.stock) > 0
-    )
+    .filter((product) => product.discountPercentage > 0)
     .sort((a, b) => {
-      const discountDiff =
-        getSystemDiscount(b.discountPercentage, b.stock) -
-        getSystemDiscount(a.discountPercentage, a.stock)
+      const discountDiff = b.discountPercentage - a.discountPercentage
       return discountDiff !== 0 ? discountDiff : b.rating - a.rating
     })
     .slice(0, limit)
@@ -191,20 +186,13 @@ async function getShopProducts({
   if (category) base = base.filter((p) => p.category === category)
   if (minPrice != null)
     base = base.filter(
-      (p) =>
-        getDiscountedPrice(p.price, p.discountPercentage, p.stock) >=
-        minPrice
+      (p) => getDiscountedPrice(p.price, p.discountPercentage) >= minPrice
     )
   if (maxPrice != null)
     base = base.filter(
-      (p) =>
-        getDiscountedPrice(p.price, p.discountPercentage, p.stock) <=
-        maxPrice
+      (p) => getDiscountedPrice(p.price, p.discountPercentage) <= maxPrice
     )
-  if (discountedOnly)
-    base = base.filter(
-      (p) => getSystemDiscount(p.discountPercentage, p.stock) > 0
-    )
+  if (discountedOnly) base = base.filter((p) => p.discountPercentage > 0)
   if (lowStockOnly) base = base.filter((p) => p.stock < 10)
 
   const ratingCounts: Record<number, number> = {}
@@ -220,14 +208,14 @@ async function getShopProducts({
   if (sort === "price-asc")
     sorted.sort(
       (a, b) =>
-        getDiscountedPrice(a.price, a.discountPercentage, a.stock) -
-        getDiscountedPrice(b.price, b.discountPercentage, b.stock)
+        getDiscountedPrice(a.price, a.discountPercentage) -
+        getDiscountedPrice(b.price, b.discountPercentage)
     )
   else if (sort === "price-desc")
     sorted.sort(
       (a, b) =>
-        getDiscountedPrice(b.price, b.discountPercentage, b.stock) -
-        getDiscountedPrice(a.price, a.discountPercentage, a.stock)
+        getDiscountedPrice(b.price, b.discountPercentage) -
+        getDiscountedPrice(a.price, a.discountPercentage)
     )
   else if (sort === "rating-asc") sorted.sort((a, b) => a.rating - b.rating)
   else if (sort === "rating-desc") sorted.sort((a, b) => b.rating - a.rating)
@@ -239,11 +227,7 @@ async function getShopProducts({
     if (lowStockOnly) {
       sorted.sort((a, b) => a.stock - b.stock)
     } else if (discountedOnly) {
-      sorted.sort(
-        (a, b) =>
-          getSystemDiscount(b.discountPercentage, b.stock) -
-          getSystemDiscount(a.discountPercentage, a.stock)
-      )
+      sorted.sort((a, b) => b.discountPercentage - a.discountPercentage)
     }
   }
 
