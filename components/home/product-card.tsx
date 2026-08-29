@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Flame } from "lucide-react"
 
-import type { Product } from "@/lib/dummyjson"
+import type { Product } from "@/lib/products"
 import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
 import { cn, formatPrice } from "@/lib/utils"
 import { StarRating } from "@/components/star-rating"

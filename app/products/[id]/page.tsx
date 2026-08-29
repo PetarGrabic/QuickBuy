@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { getProduct } from "@/lib/dummyjson"
+import { getProduct } from "@/lib/products"
 import { truncateForDisplay } from "@/lib/utils"
 import { Breadcrumb } from "@/components/products/breadcrumb"
 import { ProductGallery } from "@/components/products/product-gallery"

@@ -1,6 +1,6 @@
 import { Star } from "lucide-react"
 
-import type { ProductReview } from "@/lib/dummyjson"
+import type { ProductReview } from "@/lib/products"
 import { StarRating } from "@/components/star-rating"
 
 const STAR_LEVELS = [5, 4, 3, 2, 1] as const

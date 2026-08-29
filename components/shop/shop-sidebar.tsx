@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { StarRating } from "@/components/star-rating"
 import { cn } from "@/lib/utils"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
-import type { Category } from "@/lib/dummyjson"
+import type { Category } from "@/lib/products"
 import { useShopPending } from "@/components/shop/shop-pending-context"
 
 const RATINGS = [4, 3, 2]

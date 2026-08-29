@@ -5,7 +5,7 @@ import { X } from "lucide-react"
 
 import { cn, truncateForDisplay } from "@/lib/utils"
 import { buildShopHref, type ShopParams } from "@/lib/shop-url"
-import type { Category } from "@/lib/dummyjson"
+import type { Category } from "@/lib/products"
 import { useShopPending } from "@/components/shop/shop-pending-context"
 
 const DEFAULT_MAX_VISIBLE_CHIPS = 4

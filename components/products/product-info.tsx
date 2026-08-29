@@ -1,6 +1,6 @@
 import { Flame } from "lucide-react"
 
-import type { ProductDetail } from "@/lib/dummyjson"
+import type { ProductDetail } from "@/lib/products"
 import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
 import { formatPrice } from "@/lib/utils"
 import { StarRating } from "@/components/star-rating"

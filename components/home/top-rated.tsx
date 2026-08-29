@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
-import { getTopRated } from "@/lib/dummyjson"
+import { getTopRated } from "@/lib/products"
 import { ProductCard } from "@/components/home/product-card"
 import { Carousel } from "@/components/home/carousel"
 import { ViewAllCard } from "@/components/home/view-all-card"

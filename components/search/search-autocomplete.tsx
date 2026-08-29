@@ -14,7 +14,7 @@ import {
   formatPrice,
   truncateForDisplay,
 } from "@/lib/utils"
-import { searchProducts, type Category, type Product } from "@/lib/dummyjson"
+import { searchProducts, type Category, type Product } from "@/lib/products"
 import {
   addRecentSearch,
   getRecentSearches,

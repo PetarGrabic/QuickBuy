@@ -6,7 +6,7 @@ import { Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { SearchAutocomplete } from "@/components/search/search-autocomplete"
-import type { Category } from "@/lib/dummyjson"
+import type { Category } from "@/lib/products"
 
 function MobileSearch({
   children,

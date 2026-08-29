@@ -1,4 +1,4 @@
-import type { ProductDetail } from "@/lib/dummyjson"
+import type { ProductDetail } from "@/lib/products"
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (

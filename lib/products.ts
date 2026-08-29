@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation"
 
 import { getSystemDiscount, getDiscountedPrice } from "@/lib/discounts"
-
-const API_BASE = "https://dummyjson.com"
+import { supabase } from "@/lib/supabase"
 
 interface Product {
   id: number
@@ -12,7 +11,7 @@ interface Product {
   rating: number
   thumbnail: string
   category: string
-  brand?: string
+  brand: string | null
   stock: number
 }
 
@@ -26,23 +25,18 @@ interface ProductReview {
 
 interface ProductDetail extends Product {
   description: string
-  tags: string[]
   sku: string
-  weight: number
   dimensions: { width: number; height: number; depth: number }
   warrantyInformation: string
   shippingInformation: string
-  availabilityStatus: string
-  reviews: ProductReview[]
   returnPolicy: string
-  minimumOrderQuantity: number
+  reviews: ProductReview[]
   images: string[]
 }
 
 interface Category {
   slug: string
   name: string
-  url: string
 }
 
 interface GetProductsParams {
@@ -53,6 +47,23 @@ interface GetProductsParams {
   category?: string
 }
 
+// PostgREST column aliases so the returned rows already match the camelCase
+// types above — no separate mapping layer needed.
+const CARD_COLUMNS =
+  "id, title, price, discountPercentage:discount_percentage, rating, thumbnail, category, brand, stock"
+
+const DETAIL_COLUMNS = `${CARD_COLUMNS}, description, sku, dimensions, warrantyInformation:warranty_information, shippingInformation:shipping_information, returnPolicy:return_policy, images, reviews:product_reviews(rating, comment, date:review_date, reviewerName:reviewer_name, reviewerEmail:reviewer_email)`
+
+const SORT_COLUMNS: Record<
+  NonNullable<GetProductsParams["sortBy"]>,
+  string
+> = {
+  rating: "rating",
+  discountPercentage: "discount_percentage",
+  price: "price",
+  title: "title",
+}
+
 async function getProducts({
   limit,
   skip,
@@ -60,48 +71,33 @@ async function getProducts({
   order,
   category,
 }: GetProductsParams = {}): Promise<Product[]> {
-  const search = new URLSearchParams()
-  search.set(
-    "select",
-    "id,title,price,discountPercentage,rating,thumbnail,category,brand,stock"
-  )
-  if (limit) search.set("limit", String(limit))
-  if (skip) search.set("skip", String(skip))
-  if (sortBy) search.set("sortBy", sortBy)
-  if (order) search.set("order", order)
+  let query = supabase.from("products").select(CARD_COLUMNS)
 
-  const path = category ? `/products/category/${category}` : "/products"
-
-  const res = await fetch(`${API_BASE}${path}?${search.toString()}`, {
-    next: { revalidate: 3600 },
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch products: ${res.status}`)
+  if (category) query = query.eq("category", category)
+  if (sortBy) {
+    query = query.order(SORT_COLUMNS[sortBy], { ascending: order !== "desc" })
+  }
+  if (skip != null || limit != null) {
+    const from = skip ?? 0
+    const to = from + (limit ?? 1000) - 1
+    query = query.range(from, to)
+  } else if (limit != null) {
+    query = query.limit(limit)
   }
 
-  const data: { products: Product[] } = await res.json()
-  return data.products
+  const { data, error } = await query
+  if (error) {
+    throw new Error(`Failed to fetch products: ${error.message}`)
+  }
+  return (data ?? []) as unknown as Product[]
 }
 
 async function getAllProducts(): Promise<Product[]> {
-  const search = new URLSearchParams()
-  search.set(
-    "select",
-    "id,title,price,discountPercentage,rating,thumbnail,category,brand,stock"
-  )
-  search.set("limit", "200")
-
-  const res = await fetch(`${API_BASE}/products?${search.toString()}`, {
-    next: { revalidate: 3600 },
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch products: ${res.status}`)
+  const { data, error } = await supabase.from("products").select(CARD_COLUMNS)
+  if (error) {
+    throw new Error(`Failed to fetch products: ${error.message}`)
   }
-
-  const data: { products: Product[] } = await res.json()
-  return data.products
+  return (data ?? []) as unknown as Product[]
 }
 
 async function getBestDeals(limit: number): Promise<Product[]> {
@@ -266,31 +262,33 @@ async function getShopProducts({
 }
 
 async function getProduct(id: string): Promise<ProductDetail> {
-  const res = await fetch(`${API_BASE}/products/${id}`, {
-    next: { revalidate: 3600 },
-  })
+  const { data, error } = await supabase
+    .from("products")
+    .select(DETAIL_COLUMNS)
+    .eq("id", Number(id))
+    .order("id", { referencedTable: "product_reviews", ascending: true })
+    .maybeSingle()
 
-  if (res.status === 404) {
+  if (error) {
+    throw new Error(`Failed to fetch product: ${error.message}`)
+  }
+  if (!data) {
     notFound()
   }
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch product: ${res.status}`)
-  }
-
-  return res.json()
+  return data as unknown as ProductDetail
 }
 
 async function getCategories(): Promise<Category[]> {
-  const res = await fetch(`${API_BASE}/products/categories`, {
-    next: { revalidate: 3600 },
-  })
+  const { data, error } = await supabase
+    .from("categories")
+    .select("slug, name")
+    .order("name")
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch categories: ${res.status}`)
+  if (error) {
+    throw new Error(`Failed to fetch categories: ${error.message}`)
   }
-
-  return res.json()
+  return (data ?? []) as Category[]
 }
 
 async function searchProducts(
@@ -298,18 +296,22 @@ async function searchProducts(
   limit = 4,
   signal?: AbortSignal
 ): Promise<Product[]> {
-  const search = new URLSearchParams({ q: query, limit: String(limit) })
+  const q = query.trim()
+  if (!q) return []
 
-  const res = await fetch(`${API_BASE}/products/search?${search.toString()}`, {
-    signal,
-  })
+  let request = supabase
+    .from("products")
+    .select(CARD_COLUMNS)
+    .ilike("search_text", `%${q}%`)
+    .limit(limit)
 
-  if (!res.ok) {
-    throw new Error(`Failed to search products: ${res.status}`)
+  if (signal) request = request.abortSignal(signal)
+
+  const { data, error } = await request
+  if (error) {
+    throw new Error(`Failed to search products: ${error.message}`)
   }
-
-  const data: { products: Product[] } = await res.json()
-  return data.products
+  return (data ?? []) as unknown as Product[]
 }
 
 export {

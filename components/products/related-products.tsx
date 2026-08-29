@@ -1,4 +1,4 @@
-import { getProducts } from "@/lib/dummyjson"
+import { getProducts } from "@/lib/products"
 import { RelatedProductsCarousel } from "@/components/products/related-products-carousel"
 
 const MAX_DESKTOP = 10

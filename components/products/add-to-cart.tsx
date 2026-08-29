@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Minus, Plus } from "lucide-react"
 
-import type { ProductDetail } from "@/lib/dummyjson"
+import type { ProductDetail } from "@/lib/products"
 import { useCart } from "@/lib/cart/cart-context"
 import { Button } from "@/components/ui/button"
 
