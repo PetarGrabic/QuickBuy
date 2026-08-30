@@ -6,6 +6,7 @@ import { CircleAlert, Eye, EyeOff } from "lucide-react"
 
 import { supabaseAuth } from "@/lib/auth/supabase-client"
 import { useAuth } from "@/lib/auth/auth-context"
+import { FieldError, EMAIL_RE } from "@/components/auth/field-error"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -15,8 +16,6 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { toast } from "@/components/ui/toast"
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // Return to where the user came from, but never to an auth page (and never
 // off-site).
@@ -31,19 +30,6 @@ interface FieldErrors {
   email?: string
   password?: string
   form?: string
-}
-
-function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
-  return (
-    <p
-      id={id}
-      role="alert"
-      className="flex items-center gap-1.5 text-sm font-medium text-destructive"
-    >
-      <CircleAlert className="size-4 shrink-0" />
-      {children}
-    </p>
-  )
 }
 
 function LoginForm() {

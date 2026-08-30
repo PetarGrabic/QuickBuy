@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Heart, LogOut, User } from "lucide-react"
+import { ChevronRight, Heart, LogOut, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth/auth-context"
@@ -54,6 +54,7 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
     setMenuOpen(false)
     onNavigate?.()
     await signOut()
+    router.push("/")
     router.refresh()
   }
 
@@ -107,6 +108,9 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
   }
 
   // --- Logged in ---------------------------------------------------------
+  const itemClass =
+    "flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50"
+
   const favorites = (
     <button
       type="button"
@@ -115,10 +119,14 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
         setMenuOpen(false)
         onNavigate?.()
       }}
-      className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm text-foreground hover:bg-muted"
+      className={cn(
+        itemClass,
+        "text-foreground hover:bg-foreground/[0.06] active:bg-foreground/10"
+      )}
     >
-      <Heart className="size-4 text-muted-foreground" />
-      Favorites
+      <Heart className="size-4.5 shrink-0 text-muted-foreground" />
+      <span className="flex-1">Favorites</span>
+      <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
     </button>
   )
 
@@ -126,23 +134,32 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
     <button
       type="button"
       onClick={handleLogout}
-      className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm text-foreground hover:bg-muted"
+      className={cn(
+        itemClass,
+        "text-destructive hover:bg-destructive/10 active:bg-destructive/15"
+      )}
     >
-      <LogOut className="size-4 text-muted-foreground" />
-      Log out
+      <LogOut className="size-4.5 shrink-0" />
+      <span className="flex-1">Log out</span>
     </button>
   )
 
+  const accountHeader = (
+    <div className="flex flex-col gap-0.5 px-3 py-2">
+      <p className="truncate text-sm font-semibold text-foreground">
+        {user.fullName}
+      </p>
+      <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+    </div>
+  )
+
+  const divider = <div className="mx-1 my-1 h-px bg-border" />
+
   if (variant === "mobile") {
     return (
-      <div className="flex flex-col gap-1 rounded-lg border border-border p-2">
-        <div className="px-2 py-1.5">
-          <p className="truncate text-sm font-semibold text-foreground">
-            {user.fullName}
-          </p>
-          <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-        </div>
-        <div className="mx-2 border-t border-border" />
+      <div className="flex flex-col gap-1 rounded-xl border border-border p-2.5">
+        {accountHeader}
+        {divider}
         {favorites}
         {logout}
       </div>
@@ -157,24 +174,22 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
             variant="outline"
             size="icon"
             aria-label="Account menu"
-            className={cn("rounded-full lg:size-10")}
+            className={cn("rounded-full lg:size-12")}
           />
         }
       >
-        <User />
+        <User className="size-5" />
       </PopoverTrigger>
       <PopoverPortal>
-        <PopoverPositioner side="bottom" align="end">
-          <PopoverPopup className="w-56 p-2">
-            <div className="px-2 py-1.5">
-              <p className="truncate text-sm font-semibold text-foreground">
-                {user.fullName}
-              </p>
-              <p className="truncate text-xs text-muted-foreground">
-                {user.email}
-              </p>
-            </div>
-            <div className="mx-2 my-1 border-t border-border" />
+        <PopoverPositioner
+          side="bottom"
+          align="center"
+          sideOffset={10}
+          collisionPadding={12}
+        >
+          <PopoverPopup className="w-64 p-2">
+            {accountHeader}
+            {divider}
             {favorites}
             {logout}
           </PopoverPopup>

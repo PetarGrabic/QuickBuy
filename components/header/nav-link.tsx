@@ -16,7 +16,14 @@ function NavLink({
   variant?: "desktop" | "mobile"
   onNavigate?: () => void
 }) {
-  const pathname = usePathname()
+  // `usePathname()` can briefly be `null` on the first client render of a
+  // statically prerendered page (the router context isn't populated yet on a
+  // hard load — noticeable on Vercel), which would drop the active styling the
+  // server already rendered. Fall back to the real URL so the highlight holds.
+  const routerPathname = usePathname()
+  const pathname =
+    routerPathname ??
+    (typeof window !== "undefined" ? window.location.pathname : "")
   const isActive = pathname === href
 
   if (variant === "mobile") {
