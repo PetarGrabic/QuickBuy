@@ -69,7 +69,7 @@ function ProductInfo({ product }: { product: ProductDetail }) {
           product={product}
           maxQuantity={Math.min(product.stock, 10)}
         />
-        <FavoriteButton />
+        <FavoriteButton productId={product.id} />
       </div>
     </div>
   )

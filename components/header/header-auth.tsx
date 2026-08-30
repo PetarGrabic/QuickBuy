@@ -112,22 +112,21 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
     "flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50"
 
   const favorites = (
-    <button
-      type="button"
+    <Link
+      href="/favorites"
       onClick={() => {
-        // Favorites page isn't built yet — this is intentionally inert.
         setMenuOpen(false)
         onNavigate?.()
       }}
       className={cn(
         itemClass,
-        "text-foreground hover:bg-foreground/[0.06] active:bg-foreground/10"
+        "text-foreground hover:bg-foreground/6   active:bg-foreground/10"
       )}
     >
       <Heart className="size-4.5 shrink-0 text-muted-foreground" />
       <span className="flex-1">Favorites</span>
       <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-    </button>
+    </Link>
   )
 
   const logout = (

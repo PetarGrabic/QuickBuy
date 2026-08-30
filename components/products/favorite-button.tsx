@@ -4,20 +4,43 @@ import * as React from "react"
 import { Heart } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/lib/auth/auth-context"
+import { useFavorites } from "@/lib/favorites/favorites-context"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { Popover, PopoverTrigger } from "@/components/ui/popover"
+import { FavoriteAuthPrompt } from "@/components/products/favorite-auth-prompt"
 
-function FavoriteButton() {
-  const [isFavorited, setIsFavorited] = React.useState(false)
+// Favorite toggle on the product detail page. Logged-in users toggle a
+// DB-backed favorite; guests get a "log in to save favorites" popover.
+function FavoriteButton({ productId }: { productId: number }) {
+  const { user } = useAuth()
+  const { isFavorite, toggleFavorite } = useFavorites()
+  const [promptOpen, setPromptOpen] = React.useState(false)
 
-  function handleToggle() {
-    const next = !isFavorited
-    setIsFavorited(next)
-    toast.add({
-      title: next ? "Added to favorites" : "Removed from favorites",
-      type: "success",
-      timeout: 2500,
-    })
+  const favorited = user ? isFavorite(productId) : false
+  const label = favorited ? "Remove from favorites" : "Add to favorites"
+  const icon = (
+    <Heart className={cn(favorited && "fill-foreground text-foreground")} />
+  )
+
+  if (!user) {
+    return (
+      <Popover open={promptOpen} onOpenChange={setPromptOpen}>
+        <PopoverTrigger
+          render={
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-lg"
+              aria-label={label}
+            />
+          }
+        >
+          {icon}
+        </PopoverTrigger>
+        <FavoriteAuthPrompt />
+      </Popover>
+    )
   }
 
   return (
@@ -25,13 +48,11 @@ function FavoriteButton() {
       type="button"
       variant="outline"
       size="icon-lg"
-      onClick={handleToggle}
-      aria-pressed={isFavorited}
-      aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+      onClick={() => toggleFavorite(productId)}
+      aria-pressed={favorited}
+      aria-label={label}
     >
-      <Heart
-        className={cn(isFavorited && "fill-foreground text-foreground")}
-      />
+      {icon}
     </Button>
   )
 }

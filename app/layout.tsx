@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toast";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { CartProvider } from "@/lib/cart/cart-context";
 import { RecentsProvider } from "@/lib/recent/recents-context";
+import { FavoritesProvider } from "@/lib/favorites/favorites-context";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -38,10 +39,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <AuthProvider>
           <CartProvider>
             <RecentsProvider>
-              <Header />
-              <main className="flex-1">{children}</main>
-              <SiteFooter full={<Footer />} minimal={<MinimalFooter />} />
-              <Toaster />
+              <FavoritesProvider>
+                <Header />
+                <main className="flex-1">{children}</main>
+                <SiteFooter full={<Footer />} minimal={<MinimalFooter />} />
+                <Toaster />
+              </FavoritesProvider>
             </RecentsProvider>
           </CartProvider>
         </AuthProvider>

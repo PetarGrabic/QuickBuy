@@ -5,11 +5,14 @@ import { Heart } from "lucide-react"
 
 import type { Product } from "@/lib/products"
 import { cn } from "@/lib/utils"
-import { toast } from "@/components/ui/toast"
+import { useAuth } from "@/lib/auth/auth-context"
+import { useFavorites } from "@/lib/favorites/favorites-context"
+import { Popover, PopoverTrigger } from "@/components/ui/popover"
+import { FavoriteAuthPrompt } from "@/components/products/favorite-auth-prompt"
 
 // Favorite toggle for the top-right corner of a ProductCard image. Bare heart
-// icon (no button chrome), visible on every screen size. Favorites aren't
-// persisted yet — this is UI/UX only.
+// icon (no button chrome). Logged-in users toggle a DB-backed favorite; guests
+// get a small "log in to save favorites" popover under the heart.
 function ProductCardFavorite({
   product,
   large = false,
@@ -17,37 +20,51 @@ function ProductCardFavorite({
   product: Product
   large?: boolean
 }) {
-  const [isFavorited, setIsFavorited] = React.useState(false)
+  const { user } = useAuth()
+  const { isFavorite, toggleFavorite } = useFavorites()
+  const [promptOpen, setPromptOpen] = React.useState(false)
 
-  function handleToggle() {
-    const next = !isFavorited
-    setIsFavorited(next)
-    toast.add({
-      title: next
-        ? `Added ${product.title} to favorites`
-        : `Removed ${product.title} from favorites`,
-      type: "success",
-      timeout: 2500,
-    })
+  const favorited = user ? isFavorite(product.id) : false
+  const label = favorited ? "Remove from favorites" : "Add to favorites"
+
+  const triggerClass =
+    "group/fav absolute top-0 right-0 z-20 rounded-full p-2 outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+  const icon = (
+    <Heart
+      className={cn(
+        "drop-shadow-[0_0_2px_rgb(255_255_255/0.85)] transition-[transform,color] duration-200 group-hover/fav:scale-110 group-active/fav:scale-95",
+        large ? "size-6" : "size-5 sm:size-6",
+        favorited
+          ? "fill-foreground text-foreground"
+          : "text-muted-foreground group-hover/fav:text-foreground"
+      )}
+    />
+  )
+
+  if (!user) {
+    return (
+      <Popover open={promptOpen} onOpenChange={setPromptOpen}>
+        <PopoverTrigger
+          render={
+            <button type="button" aria-label={label} className={triggerClass} />
+          }
+        >
+          {icon}
+        </PopoverTrigger>
+        <FavoriteAuthPrompt />
+      </Popover>
+    )
   }
 
   return (
     <button
       type="button"
-      onClick={handleToggle}
-      aria-pressed={isFavorited}
-      aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
-      className="group/fav absolute top-0 right-0 z-20 rounded-full p-2 outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+      onClick={() => toggleFavorite(product.id)}
+      aria-pressed={favorited}
+      aria-label={label}
+      className={triggerClass}
     >
-      <Heart
-        className={cn(
-          "drop-shadow-[0_0_2px_rgb(255_255_255/0.85)] transition-[transform,color] duration-200 group-hover/fav:scale-110 group-active/fav:scale-95",
-          large ? "size-6" : "size-5 sm:size-6",
-          isFavorited
-            ? "fill-foreground text-foreground"
-            : "text-muted-foreground group-hover/fav:text-foreground"
-        )}
-      />
+      {icon}
     </button>
   )
 }
