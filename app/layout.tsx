@@ -7,7 +7,9 @@ import { Footer } from "@/components/footer/footer";
 import { MinimalFooter } from "@/components/footer/minimal-footer";
 import { SiteFooter } from "@/components/footer/site-footer";
 import { Toaster } from "@/components/ui/toast";
+import { AuthProvider } from "@/lib/auth/auth-context";
 import { CartProvider } from "@/lib/cart/cart-context";
+import { RecentsProvider } from "@/lib/recent/recents-context";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -33,12 +35,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <CartProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <SiteFooter full={<Footer />} minimal={<MinimalFooter />} />
-          <Toaster />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <RecentsProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <SiteFooter full={<Footer />} minimal={<MinimalFooter />} />
+              <Toaster />
+            </RecentsProvider>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

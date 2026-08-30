@@ -15,17 +15,7 @@ import {
   truncateForDisplay,
 } from "@/lib/utils"
 import { searchProducts, type Category, type Product } from "@/lib/products"
-import {
-  addRecentSearch,
-  getRecentSearches,
-  removeRecentSearch,
-} from "@/lib/recent-searches"
-import {
-  addRecentProduct,
-  getRecentProducts,
-  removeRecentProduct,
-  type RecentProduct,
-} from "@/lib/recent-products"
+import { useRecents } from "@/lib/recent/recents-context"
 
 const DEBOUNCE_MS = 250
 const MAX_CATEGORY_MATCHES = 3
@@ -85,12 +75,14 @@ function SearchAutocomplete({
   const [products, setProducts] = React.useState<Product[]>([])
   const [resolvedQuery, setResolvedQuery] = React.useState("")
   const [keyboardIndex, setKeyboardIndex] = React.useState(-1)
-  const [recentSearches, setRecentSearches] = React.useState<string[]>(() =>
-    getRecentSearches()
-  )
-  const [recentProducts, setRecentProducts] = React.useState<
-    RecentProduct[]
-  >(() => getRecentProducts())
+  const {
+    recentSearches,
+    recentProducts,
+    addRecentSearch,
+    removeRecentSearch,
+    addRecentProduct,
+    removeRecentProduct,
+  } = useRecents()
   const [containerWidth, setContainerWidth] = React.useState(0)
   const [viewportWidth, setViewportWidth] = React.useState(0)
 
@@ -220,20 +212,18 @@ function SearchAutocomplete({
 
   function navigateTo(index: number) {
     if (index < matchedCategories.length) {
-      setRecentSearches(addRecentSearch(query))
+      addRecentSearch(query)
     } else {
       const productIndex = index - matchedCategories.length
       const product = visibleProducts[productIndex]
       if (product) {
-        setRecentProducts(
-          addRecentProduct({
-            id: product.id,
-            title: product.title,
-            thumbnail: product.thumbnail,
-          })
-        )
+        addRecentProduct({
+          id: product.id,
+          title: product.title,
+          thumbnail: product.thumbnail,
+        })
       } else {
-        setRecentSearches(addRecentSearch(query))
+        addRecentSearch(query)
       }
     }
     markPending()
@@ -243,7 +233,7 @@ function SearchAutocomplete({
   }
 
   function selectRecentSearch(item: string) {
-    setRecentSearches(addRecentSearch(item))
+    addRecentSearch(item)
     markPending()
     router.push(`/shop?q=${encodeURIComponent(item)}`)
     setDropdownOpen(false)
@@ -256,7 +246,7 @@ function SearchAutocomplete({
   ) {
     event.preventDefault()
     event.stopPropagation()
-    setRecentSearches(removeRecentSearch(item))
+    removeRecentSearch(item)
   }
 
   function handleRemoveRecentProduct(
@@ -265,7 +255,7 @@ function SearchAutocomplete({
   ) {
     event.preventDefault()
     event.stopPropagation()
-    setRecentProducts(removeRecentProduct(id))
+    removeRecentProduct(id)
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -409,7 +399,7 @@ function SearchAutocomplete({
                       <Link
                         href={`/shop?q=${encodeURIComponent(item)}`}
                         onClick={() => {
-                          setRecentSearches(addRecentSearch(item))
+                          addRecentSearch(item)
                           setDropdownOpen(false)
                           onNavigate?.()
                         }}
@@ -454,7 +444,7 @@ function SearchAutocomplete({
                         <Link
                           href={`/products/${product.id}`}
                           onClick={() => {
-                            setRecentProducts(addRecentProduct(product))
+                            addRecentProduct(product)
                             setDropdownOpen(false)
                             onNavigate?.()
                           }}
@@ -498,7 +488,7 @@ function SearchAutocomplete({
                       role="option"
                       aria-selected={keyboardIndex === i}
                       onClick={() => {
-                        setRecentSearches(addRecentSearch(query))
+                        addRecentSearch(query)
                         setDropdownOpen(false)
                         onNavigate?.()
                       }}
@@ -535,13 +525,11 @@ function SearchAutocomplete({
                           role="option"
                           aria-selected={keyboardIndex === index}
                           onClick={() => {
-                            setRecentProducts(
-                              addRecentProduct({
-                                id: product.id,
-                                title: product.title,
-                                thumbnail: product.thumbnail,
-                              })
-                            )
+                            addRecentProduct({
+                              id: product.id,
+                              title: product.title,
+                              thumbnail: product.thumbnail,
+                            })
                             setDropdownOpen(false)
                             onNavigate?.()
                           }}
@@ -592,7 +580,7 @@ function SearchAutocomplete({
                 role="option"
                 aria-selected={keyboardIndex === footerIndex}
                 onClick={() => {
-                  setRecentSearches(addRecentSearch(query))
+                  addRecentSearch(query)
                   setDropdownOpen(false)
                   onNavigate?.()
                 }}

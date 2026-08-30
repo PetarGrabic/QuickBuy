@@ -37,9 +37,26 @@ function saveRecentProducts(products: RecentProduct[]) {
   }
 }
 
+function clearRecentProducts() {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // localStorage unavailable
+  }
+}
+
+// Pure: given a list (newest-first) and a product, return the next list —
+// de-duplicated by id, moved to the front, capped.
+function nextRecentProducts(
+  list: RecentProduct[],
+  product: RecentProduct
+): RecentProduct[] {
+  const rest = list.filter((p) => p.id !== product.id)
+  return [product, ...rest].slice(0, MAX_RECENT_PRODUCTS)
+}
+
 function addRecentProduct(product: RecentProduct): RecentProduct[] {
-  const existing = getRecentProducts().filter((p) => p.id !== product.id)
-  const next = [product, ...existing].slice(0, MAX_RECENT_PRODUCTS)
+  const next = nextRecentProducts(getRecentProducts(), product)
   saveRecentProducts(next)
   return next
 }
@@ -50,5 +67,13 @@ function removeRecentProduct(id: number): RecentProduct[] {
   return next
 }
 
-export { getRecentProducts, addRecentProduct, removeRecentProduct }
+export {
+  getRecentProducts,
+  saveRecentProducts,
+  clearRecentProducts,
+  nextRecentProducts,
+  addRecentProduct,
+  removeRecentProduct,
+  MAX_RECENT_PRODUCTS,
+}
 export type { RecentProduct }

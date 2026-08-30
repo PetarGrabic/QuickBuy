@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import Link from "next/link"
 
 import { LoginForm } from "@/components/auth/login-form"
@@ -19,7 +20,13 @@ export default function LoginPage() {
             Log in to your account to continue shopping.
           </p>
         </div>
-        <LoginForm />
+        <Suspense
+          fallback={
+            <div className="mt-6 h-64 animate-pulse rounded-xl bg-muted lg:mt-8" />
+          }
+        >
+          <LoginForm />
+        </Suspense>
       </div>
       <p className="mt-4 text-center text-sm text-muted-foreground lg:mt-6 lg:text-base">
         Don&apos;t have an account?{" "}

@@ -12,7 +12,19 @@ function loadCart(): CartItem[] {
 }
 
 function saveCart(items: CartItem[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  } catch {
+    // localStorage unavailable
+  }
 }
 
-export { loadCart, saveCart }
+function clearCart() {
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // localStorage unavailable
+  }
+}
+
+export { loadCart, saveCart, clearCart }

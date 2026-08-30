@@ -23,14 +23,25 @@ function saveRecentSearches(searches: string[]) {
   }
 }
 
-function addRecentSearch(query: string): string[] {
-  const trimmed = query.trim()
-  if (!trimmed) return getRecentSearches()
+function clearRecentSearches() {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // localStorage unavailable
+  }
+}
 
-  const existing = getRecentSearches().filter(
-    (q) => q.toLowerCase() !== trimmed.toLowerCase()
-  )
-  const next = [trimmed, ...existing].slice(0, MAX_RECENT_SEARCHES)
+// Pure: given a list (newest-first) and a new query, return the next list —
+// trimmed, case-insensitively de-duplicated, moved to the front, capped.
+function nextRecentSearches(list: string[], query: string): string[] {
+  const trimmed = query.trim()
+  if (!trimmed) return list
+  const rest = list.filter((q) => q.toLowerCase() !== trimmed.toLowerCase())
+  return [trimmed, ...rest].slice(0, MAX_RECENT_SEARCHES)
+}
+
+function addRecentSearch(query: string): string[] {
+  const next = nextRecentSearches(getRecentSearches(), query)
   saveRecentSearches(next)
   return next
 }
@@ -41,4 +52,12 @@ function removeRecentSearch(query: string): string[] {
   return next
 }
 
-export { getRecentSearches, addRecentSearch, removeRecentSearch }
+export {
+  getRecentSearches,
+  saveRecentSearches,
+  clearRecentSearches,
+  nextRecentSearches,
+  addRecentSearch,
+  removeRecentSearch,
+  MAX_RECENT_SEARCHES,
+}

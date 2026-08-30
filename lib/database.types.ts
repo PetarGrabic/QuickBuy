@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      cart_items: {
+        Row: {
+          product_id: number
+          quantity: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          product_id: number
+          quantity: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          product_id?: number
+          quantity?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           name: string
@@ -143,6 +172,56 @@ export type Database = {
             referencedColumns: ["slug"]
           },
         ]
+      }
+      recent_products: {
+        Row: {
+          product_id: number
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          product_id: number
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          product_id?: number
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recent_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recent_searches: {
+        Row: {
+          id: number
+          query: string
+          query_key: string | null
+          searched_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: never
+          query: string
+          query_key?: string | null
+          searched_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: never
+          query?: string
+          query_key?: string | null
+          searched_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
