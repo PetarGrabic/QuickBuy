@@ -55,6 +55,9 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
     await signOut()
     router.push("/")
     router.refresh()
+    // `router.push("/")` doesn't reset the scroll when we're already on "/",
+    // so land at the top of the homepage explicitly.
+    window.scrollTo({ top: 0, left: 0 })
   }
 
   // While auth is still resolving, `user` is null — we show the logged-out

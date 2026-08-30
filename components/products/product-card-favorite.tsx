@@ -7,6 +7,7 @@ import type { Product } from "@/lib/products"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useFavorites } from "@/lib/favorites/favorites-context"
+import { rememberReturnScroll } from "@/lib/scroll-restore"
 import { Popover, PopoverTrigger } from "@/components/ui/popover"
 import { FavoriteAuthPrompt } from "@/components/products/favorite-auth-prompt"
 
@@ -43,7 +44,15 @@ function ProductCardFavorite({
 
   if (!user) {
     return (
-      <Popover open={promptOpen} onOpenChange={setPromptOpen}>
+      <Popover
+        open={promptOpen}
+        onOpenChange={(next) => {
+          // Capture the scroll position now, before the popover mounts and can
+          // nudge it, so we can return the user here after they log in.
+          if (next) rememberReturnScroll()
+          setPromptOpen(next)
+        }}
+      >
         <PopoverTrigger
           render={
             <button type="button" aria-label={label} className={triggerClass} />

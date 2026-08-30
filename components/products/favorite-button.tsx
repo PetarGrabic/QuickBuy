@@ -6,6 +6,7 @@ import { Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useFavorites } from "@/lib/favorites/favorites-context"
+import { rememberReturnScroll } from "@/lib/scroll-restore"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverTrigger } from "@/components/ui/popover"
 import { FavoriteAuthPrompt } from "@/components/products/favorite-auth-prompt"
@@ -25,7 +26,13 @@ function FavoriteButton({ productId }: { productId: number }) {
 
   if (!user) {
     return (
-      <Popover open={promptOpen} onOpenChange={setPromptOpen}>
+      <Popover
+        open={promptOpen}
+        onOpenChange={(next) => {
+          if (next) rememberReturnScroll()
+          setPromptOpen(next)
+        }}
+      >
         <PopoverTrigger
           render={
             <Button

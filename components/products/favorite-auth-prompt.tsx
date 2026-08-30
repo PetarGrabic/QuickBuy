@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-import { rememberReturnScroll } from "@/lib/scroll-restore"
 import { rememberPendingFavorite } from "@/lib/favorites/pending-favorite"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,8 +17,8 @@ function FavoriteAuthPrompt({ productId }: { productId: number }) {
   const router = useRouter()
 
   function goToLogin() {
-    // Come back to this exact spot, with this product already favorited.
-    rememberReturnScroll()
+    // The scroll position was already captured when this popover opened; just
+    // remember which product to favorite once the user is back and signed in.
     rememberPendingFavorite(productId)
     const here = window.location.pathname + window.location.search
     router.push(`/login?next=${encodeURIComponent(here)}`)
