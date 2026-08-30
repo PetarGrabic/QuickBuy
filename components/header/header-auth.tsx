@@ -7,6 +7,7 @@ import { ChevronRight, Heart, LogOut, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth/auth-context"
+import { rememberReturnScroll } from "@/lib/scroll-restore"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -41,12 +42,10 @@ function HeaderAuth({ variant, onNavigate }: HeaderAuthProps) {
 
   function goToLogin(event: React.MouseEvent) {
     event.preventDefault()
+    const onAuthPage = isAuthPath(window.location.pathname)
+    if (!onAuthPage) rememberReturnScroll()
     const here = window.location.pathname + window.location.search
-    router.push(
-      isAuthPath(window.location.pathname)
-        ? "/login"
-        : `/login?next=${encodeURIComponent(here)}`
-    )
+    router.push(onAuthPage ? "/login" : `/login?next=${encodeURIComponent(here)}`)
     onNavigate?.()
   }
 

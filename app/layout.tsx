@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer/footer";
 import { MinimalFooter } from "@/components/footer/minimal-footer";
 import { SiteFooter } from "@/components/footer/site-footer";
 import { Toaster } from "@/components/ui/toast";
+import { ScrollRestorer } from "@/components/scroll-restorer";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { CartProvider } from "@/lib/cart/cart-context";
 import { RecentsProvider } from "@/lib/recent/recents-context";
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <main className="flex-1">{children}</main>
                 <SiteFooter full={<Footer />} minimal={<MinimalFooter />} />
                 <Toaster />
+                <ScrollRestorer />
               </FavoritesProvider>
             </RecentsProvider>
           </CartProvider>

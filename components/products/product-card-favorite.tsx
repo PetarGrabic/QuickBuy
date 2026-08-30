@@ -51,7 +51,7 @@ function ProductCardFavorite({
         >
           {icon}
         </PopoverTrigger>
-        <FavoriteAuthPrompt />
+        <FavoriteAuthPrompt productId={product.id} />
       </Popover>
     )
   }

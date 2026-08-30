@@ -66,9 +66,17 @@ function FavoritesView() {
   const [products, setProducts] = React.useState<Product[]>([])
   const [fetched, setFetched] = React.useState(false)
 
-  // Client-side gate — this is the only auth model the app has (no middleware).
+  const hadUserRef = React.useRef(false)
   React.useEffect(() => {
-    if (!authLoading && !user) router.replace("/login?next=/favorites")
+    if (user) hadUserRef.current = true
+  }, [user])
+
+  // Client-side gate (the app has no middleware). A guest who arrived here is
+  // sent to log in; a user who just logged out — or whose session expired —
+  // goes home, matching the account menu's log-out → homepage behaviour.
+  React.useEffect(() => {
+    if (authLoading || user) return
+    router.replace(hadUserRef.current ? "/" : "/login?next=/favorites")
   }, [authLoading, user, router])
 
   React.useEffect(() => {

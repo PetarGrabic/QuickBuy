@@ -5,6 +5,7 @@ import * as React from "react"
 import { useAuth } from "@/lib/auth/auth-context"
 import { supabaseAuth } from "@/lib/auth/supabase-client"
 import { runAuthedQuery } from "@/lib/auth/query"
+import { takePendingFavorite } from "@/lib/favorites/pending-favorite"
 
 interface FavoritesContextValue {
   /** Whether this product is in the signed-in user's favorites. */
@@ -53,6 +54,25 @@ function FavoritesProvider({ children }: { children: React.ReactNode }) {
     void (async () => {
       const ids = await loadFavoriteIds(uid)
       if (cancelled) return
+
+      // A guest who pressed the heart then logged in: apply that intent now.
+      const pending = takePendingFavorite()
+      if (pending != null && !ids.includes(pending)) {
+        const { error } = await supabaseAuth
+          .from("favorites")
+          .upsert(
+            { user_id: uid, product_id: pending },
+            { onConflict: "user_id,product_id" }
+          )
+        if (cancelled) return
+        if (!error) {
+          setFavoriteIds(new Set([pending, ...ids]))
+          setLoading(false)
+          return
+        }
+        console.error("pending favorite apply failed", error)
+      }
+
       setFavoriteIds(new Set(ids))
       setLoading(false)
     })()

@@ -38,7 +38,7 @@ function FavoriteButton({ productId }: { productId: number }) {
         >
           {icon}
         </PopoverTrigger>
-        <FavoriteAuthPrompt />
+        <FavoriteAuthPrompt productId={productId} />
       </Popover>
     )
   }

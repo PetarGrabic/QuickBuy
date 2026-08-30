@@ -48,9 +48,10 @@ function LoginForm() {
   const emailInvalid = Boolean(errors.email || errors.form)
   const passwordInvalid = Boolean(errors.password || errors.form)
 
-  // Already signed in — don't show the form.
+  // Already signed in — don't show the form. `scroll: false` lets <ScrollRestorer>
+  // put the user back where they were before being bounced to /login.
   React.useEffect(() => {
-    if (user) router.replace(destination)
+    if (user) router.replace(destination, { scroll: false })
   }, [user, destination, router])
 
   function clearFieldError(field: "email" | "password") {
@@ -98,7 +99,7 @@ function LoginForm() {
       return
     }
 
-    router.push(destination)
+    router.push(destination, { scroll: false })
     router.refresh()
   }
 

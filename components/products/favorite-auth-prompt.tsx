@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
+import { rememberReturnScroll } from "@/lib/scroll-restore"
+import { rememberPendingFavorite } from "@/lib/favorites/pending-favorite"
 import { Button } from "@/components/ui/button"
 import {
   PopoverPortal,
@@ -12,10 +14,13 @@ import {
 
 // Content for the heart-icon popover shown to guests. Must be rendered inside a
 // <Popover> (it provides the portal + positioner + popup).
-function FavoriteAuthPrompt() {
+function FavoriteAuthPrompt({ productId }: { productId: number }) {
   const router = useRouter()
 
   function goToLogin() {
+    // Come back to this exact spot, with this product already favorited.
+    rememberReturnScroll()
+    rememberPendingFavorite(productId)
     const here = window.location.pathname + window.location.search
     router.push(`/login?next=${encodeURIComponent(here)}`)
   }
